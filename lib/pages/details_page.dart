@@ -55,17 +55,45 @@ class _DetailsPageState extends State<DetailsPage> {
             ),
           ),
           Expanded(
-            child: Container(
+            child: Stack(
+              children: [
+                Container(
                   child: new CachedNetworkImage(
                     imageUrl: urlImg,
                     placeholder: (context, url) => Image(
-                      image: AssetImage("assets/images/placeholder.png"),
-                      fit: BoxFit.cover
+                        image: AssetImage("assets/images/placeholder.png"),
+                        fit: BoxFit.cover
                     ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,// You can adjust the fit based on your requirements
+                  ),
                 ),
-            ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: (){},
+                          icon: Icon(Icons.info_outline),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: (){},
+                            icon: Icon(Icons.arrow_downward_outlined,color: Colors.black,),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            )
           ),
           SizedBox(
               height: 20,
