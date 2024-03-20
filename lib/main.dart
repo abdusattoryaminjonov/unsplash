@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unsplash/pages/collections_page.dart';
+import 'package:unsplash/pages/collection_page.dart';
 import 'package:unsplash/pages/details_page.dart';
 import 'package:unsplash/pages/home_page.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: CollectionPage(),
+      home: DetailsPage(),
     );
   }
 }

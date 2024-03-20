@@ -33,7 +33,7 @@ class _DetailsPageState extends State<DetailsPage> {
         centerTitle: true,
         title: Text(username,style: TextStyle(color: Colors.white),),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
+            icon: Icon(Icons.arrow_back_ios,color: Colors.white,),
             onPressed: () {
               _backToFinish();
             }
@@ -48,12 +48,12 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: Column(
         children: [
-          SizedBox(
-              height: 50,
-            child:Container(
-              color: Colors.black,
-            ),
-          ),
+          // SizedBox(
+          //     height: 50,
+          //   child:Container(
+          //     color: Colors.black,
+          //   ),
+          // ),
           Expanded(
             child: Stack(
               children: [
@@ -65,7 +65,9 @@ class _DetailsPageState extends State<DetailsPage> {
                         fit: BoxFit.cover
                     ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
-                    fit: BoxFit.cover,// You can adjust the fit based on your requirements
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 Column(
@@ -76,9 +78,11 @@ class _DetailsPageState extends State<DetailsPage> {
                       children: [
                         IconButton(
                           onPressed: (){},
-                          icon: Icon(Icons.info_outline),
+                          icon: Icon(Icons.info_outline,color: Colors.white,),
+                          
                         ),
                         Container(
+                          margin: EdgeInsets.only(bottom: 30,right: 20),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
@@ -95,12 +99,12 @@ class _DetailsPageState extends State<DetailsPage> {
               ],
             )
           ),
-          SizedBox(
-              height: 20,
-            child:Container(
-              color: Colors.black,
-            ),
-          ),
+          // SizedBox(
+          //     height: 20,
+          //   child:Container(
+          //     color: Colors.black,
+          //   ),
+          // ),
         ],
       ),
     );
