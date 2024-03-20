@@ -48,12 +48,7 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: Column(
         children: [
-          // SizedBox(
-          //     height: 50,
-          //   child:Container(
-          //     color: Colors.black,
-          //   ),
-          // ),
+
           Expanded(
             child: Stack(
               children: [
@@ -73,38 +68,34 @@ class _DetailsPageState extends State<DetailsPage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          onPressed: (){},
-                          icon: Icon(Icons.info_outline,color: Colors.white,),
-                          
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 30,right: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 30,horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
                             onPressed: (){},
-                            icon: Icon(Icons.arrow_downward_outlined,color: Colors.black,),
+                            icon: Icon(Icons.info_outline,color: Colors.white,size: 30,),
                           ),
-                        )
-                      ],
+                          IconButton(
+                            onPressed: (){},
+                            icon: Icon(Icons.download_for_offline_outlined,color: Colors.white,size: 40,),
+                          ),
+                          // Container(
+                          //   margin: EdgeInsets.only(bottom: 30,right: 20),
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.white,
+                          //     shape: BoxShape.circle,
+                          //   ),
+                          // )
+                        ],
+                      ),
                     ),
                   ],
                 )
               ],
             )
           ),
-          // SizedBox(
-          //     height: 20,
-          //   child:Container(
-          //     color: Colors.black,
-          //   ),
-          // ),
         ],
       ),
     );
