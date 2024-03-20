@@ -38,6 +38,7 @@ class _CollectionPageState extends State<CollectionPage> {
             }
         ),
       ),
+
       body: Container(
         color: Colors.black,
         child: StaggeredGridView.countBuilder(
@@ -50,10 +51,11 @@ class _CollectionPageState extends State<CollectionPage> {
           mainAxisSpacing: 2.0,
           crossAxisSpacing: 2.0,
         ),
-      )
+      ),
     );
   }
 }
+
 class ImageCard extends StatelessWidget {
   const ImageCard({required this.imageData});
 
@@ -62,7 +64,18 @@ class ImageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16.0),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(20),
+      //   gradient:LinearGradient(
+      //       begin:Alignment.bottomRight,
+      //       colors: [
+      //         Colors.black.withOpacity(0.7),
+      //         Colors.black.withOpacity(0.7),
+      //         Colors.black.withOpacity(0.5),
+      //         Colors.black.withOpacity(0.1),
+      //       ]
+      //   ),
+      // ),
       child: Image.network(imageData.imageUrl, fit: BoxFit.cover),
     );
   }
