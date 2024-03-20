@@ -9,8 +9,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  PageController? _pageController;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _pageController = PageController();
+  }
   @override
   Widget build(BuildContext context) {
-    return  DetailsPage();
+    return const DetailsPage();
   }
 }
