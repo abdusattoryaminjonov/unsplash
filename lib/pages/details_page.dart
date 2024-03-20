@@ -13,6 +13,11 @@ class _DetailsPageState extends State<DetailsPage> {
   String username = "Lucas Gallone";
   String urlImg = "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1528&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
+  _backToFinish(){
+    print("Qayti");
+  }
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -28,12 +33,10 @@ class _DetailsPageState extends State<DetailsPage> {
         centerTitle: true,
         title: Text(username,style: TextStyle(color: Colors.white),),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: (){
-            _backToFinish(){
-              print("Qayti");
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              _backToFinish();
             }
-          },
         ),
         actions: [
           IconButton(
@@ -52,11 +55,17 @@ class _DetailsPageState extends State<DetailsPage> {
             ),
           ),
           Expanded(
-            child: Column(
-              children: [
-
-              ],
-            )
+            child: Container(
+                  child: new CachedNetworkImage(
+                    imageUrl: urlImg,
+                    placeholder: (context, url) => Image(
+                      image: AssetImage("assets/images/placeholder.png"),
+                      fit: BoxFit.cover
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.cover,// You can adjust the fit based on your requirements
+                ),
+            ),
           ),
           SizedBox(
               height: 20,

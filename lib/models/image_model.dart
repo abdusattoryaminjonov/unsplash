@@ -1,5 +1,3 @@
-
-
 class ImageModel {
   final String id;
   final String? username;

@@ -93,6 +93,10 @@ class _CollectionPageState extends State<CollectionPage> {
     ),
   ];
 
+  _backToFinish(){
+    print("Qayti");
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -106,6 +110,12 @@ class _CollectionPageState extends State<CollectionPage> {
         backgroundColor: Colors.black,
         centerTitle: true,
         title: Text(title, style: TextStyle(color: Colors.white),),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios,color: Colors.white,),
+            onPressed: () {
+              _backToFinish();
+            }
+        ),
       ),
       body: Container(
         color: Colors.black,
