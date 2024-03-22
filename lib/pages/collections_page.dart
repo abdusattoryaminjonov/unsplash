@@ -1,7 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:lottie/lottie.dart';
+import 'package:unsplash/models/image_collections_model.dart';
 
 import '../models/image_model.dart';
+import '../services/http_service.dart';
+import '../services/log_sevice.dart';
+
 class CollectionsPage extends StatefulWidget {
   const CollectionsPage({super.key});
 
@@ -10,41 +16,72 @@ class CollectionsPage extends StatefulWidget {
 }
 
 class _CollectionsPageState extends State<CollectionsPage> {
+
+  bool isLoading = true;
+  List<ImageCollections> imageCollections = [];
+  _apiImageCollections() async{
+    var response = await Network.GET(Network.API_COLLECTIONS,Network.paramsCollections());
+    print(response);
+    LogService.d(response!);
+    setState(() {
+      imageCollections = Network.parseCollections(response);
+      isLoading = false;
+    });
+
+  }
+
+  _callCollectionPage(){
+
+  }
+
+  Future<void> _handleRefresh() async {
+    _apiImageCollections();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _apiImageCollections();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        width: MediaQuery.of(context).size.width,
-        child: StaggeredGridView.countBuilder(
-          crossAxisCount: 1,
-          //mainAxisCount:3,
-          itemCount: imageList.length,
-          itemBuilder: (context, index) => ImageCard(
-            imageData: imageList[index],),
-          staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-          mainAxisSpacing: 4.4,
-          crossAxisSpacing: 2.0,
-
-        ),
+      body: Stack(
+        children: [
+          RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: ListView.builder(
+              itemCount: imageCollections.length,
+              itemBuilder: (ctx, index) {
+                return _itemOfCollectons(imageCollections[index]);
+              },
+            ),
+          ),
+          isLoading
+              ? Center(
+            child: Lottie.asset("assets/images/loading.json",width: 150),
+          )
+              : SizedBox.shrink(),
+        ],
       ),
     );
   }
-}
 
-class ImageCard extends StatelessWidget {
-  const ImageCard({required this.imageData});
-
-  final ImageModel imageData;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      // heightFactor: MediaQuery.of(context).size.height/3,
-      child: ClipRRect(
-
-        borderRadius: BorderRadius.circular(0.0),
-        child: Image.network(imageData.imageUrl, fit: BoxFit.cover),
+  Widget _itemOfCollectons(ImageCollections imageCollections){
+    return GestureDetector(
+      onTap: _callCollectionPage(),
+      child: Container(
+        child: CachedNetworkImage(
+          fit: BoxFit.cover,
+          imageUrl: imageCollections.coverPhoto.urls.full,
+          placeholder: (context, url) => Image(
+              image: AssetImage("assets/images/placeholder.png"),
+              fit: BoxFit.cover
+          ),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
       ),
     );
   }

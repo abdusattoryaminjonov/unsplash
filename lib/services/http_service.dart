@@ -1,20 +1,17 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:unsplash/models/image_modell.dart';
+import 'package:unsplash/models/image_collections_model.dart';
+import 'package:unsplash/models/image_search_model.dart';
+
+import '../models/image_collection_model.dart';
 
 class Network{
   static String BASE = "api.unsplash.com";
   static String CLIENT_ID = "DFBUdDTjQJ8BSer4c6X_XuspGXYg1GgwzRND8Agd7QQ";
-  static Map<String,String> headers = {
-    'Content-Type':'application/json; charset=UTF-8',
-    'client_id':CLIENT_ID
-  };
+  static Map<String,String> headers = {'Content-Type':'application/json; charset=UTF-8'};
 
-  /* Http Apis*/
-  static String API_SEARCH_PHOTOS = "/search/photos";
-  static String API_SEARCH_COLLECTIONS = "/search/collections";
-  static String API_COLLECTIONS_ID = "/collections/:id/photos";
+
 
   /* Http Requests */
   static Future<String?> GET(String api, Map<String, String> params) async{
@@ -54,13 +51,40 @@ class Network{
     return null;
   }
 
+  /* Http Apis*/
+  static String API_SEARCH_PHOTOS = "/search/photos";
+  static String API_COLLECTIONS = "/collections";
+  static String API_COLLECTIONS_ID = "/collections/:id/photos";
+
+
   /* Http Params */
   static Map<String, String> paramsSearch() {
     Map<String, String> params = Map();
     params.addAll({
+      'client_id': CLIENT_ID,
       'page':'1',
-      'query':'unsplash',
-      'client_id': CLIENT_ID
+      'query':'unsplash'
+    });
+    return params;
+  }
+
+  static Map<String, String> paramsCollections() {
+    Map<String, String> params = Map();
+    params.addAll({
+      'client_id': CLIENT_ID,
+      'page':'1',
+      'per_page':'20'
+    });
+    return params;
+  }
+
+  static Map<String, String> paramsCollection() {
+    Map<String, String> params = Map();
+    params.addAll({
+      'client_id': CLIENT_ID,
+      'page':'1',
+      'per_page':'20',
+      'orientation':'landscape'
     });
     return params;
   }
@@ -70,5 +94,15 @@ class Network{
   static ImageModell parseImageModel(String response) {
     dynamic json = jsonDecode(response);
     return ImageModell.fromJson(json);
+  }
+
+  static List<ImageCollections> parseCollections(String response) {
+    dynamic json = jsonDecode(response);
+    return List<ImageCollections>.from(json.map((x) => ImageCollections.fromJson(x)));
+  }
+
+  static List<ImageCollection> parseCollection(String response) {
+    dynamic json = jsonDecode(response);
+    return List<ImageCollection>.from(json.map((x) => ImageCollection.fromJson(x)));
   }
 }

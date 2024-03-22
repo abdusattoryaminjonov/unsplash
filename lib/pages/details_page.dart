@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:unsplash/models/image_model.dart';
 
 class DetailsPage extends StatefulWidget {
+
   const DetailsPage({super.key});
 
   @override

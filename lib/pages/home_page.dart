@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 import 'package:unsplash/models/image_model.dart';
 import 'package:unsplash/pages/details_page.dart';
 
-import '../models/image_modell.dart';
 import '../models/image_search_model.dart';
 import '../services/http_service.dart';
 import '../services/log_sevice.dart';

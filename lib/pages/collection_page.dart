@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:unsplash/models/image_model.dart';
-import 'package:unsplash/models/image_modell.dart';
+import 'package:unsplash/models/image_search_model.dart';
 
 import '../services/http_service.dart';
 import '../services/log_sevice.dart';
@@ -19,12 +19,14 @@ class _CollectionPageState extends State<CollectionPage> {
   bool isLoading = true;
   String title = "Nature";
   ImageModell? imageModell;
+  List<Result> imageModelList = [];
 
-  _apiImageList() async{
+  _apiImageSearchPhotos() async{
     var response = await Network.GET(Network.API_SEARCH_PHOTOS,Network.paramsSearch());
     LogService.d(response!);
     setState(() {
       imageModell = Network.parseImageModel(response);
+      imageModelList = imageModell!.results;
     });
   }
   
@@ -37,7 +39,7 @@ class _CollectionPageState extends State<CollectionPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _apiImageList();
+    _apiImageSearchPhotos();
   }
 
   @override
@@ -59,9 +61,9 @@ class _CollectionPageState extends State<CollectionPage> {
         color: Colors.black,
         child: StaggeredGridView.countBuilder(
           crossAxisCount: 2,
-          itemCount: imageList.length,
+          itemCount: imageModelList.length,
           itemBuilder: (context, index) => ImageCard(
-            imageData: imageList[index],
+            imageData: imageModelList[index],
           ),
           staggeredTileBuilder: (index) => StaggeredTile.fit(1),
           mainAxisSpacing: 2.0,
@@ -74,8 +76,8 @@ class _CollectionPageState extends State<CollectionPage> {
 
 class ImageCard extends StatelessWidget {
   const ImageCard({required this.imageData});
-   final ImageModel imageData;
-  // final ImageModell imageData;
+
+   final Result imageData;
 
   _callDetailsPage(){
     print("CLICK");
@@ -89,7 +91,7 @@ class ImageCard extends StatelessWidget {
       },
       child: Stack(
           children: [
-            Image.network(imageData.imageUrl, fit: BoxFit.cover),
+            Image.network(imageData.urls.full, fit: BoxFit.cover),
             Positioned(
               bottom: 0,
               left: 0,
@@ -114,7 +116,7 @@ class ImageCard extends StatelessWidget {
                       ]
                   ),
                 ),
-                child: Text(imageData.username!,style: TextStyle(
+                child: Text(imageData.user.username,style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                 ),
