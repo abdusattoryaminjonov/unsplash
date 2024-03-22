@@ -40,7 +40,8 @@ class _HomePageState extends State<HomePage> {
                  onTap: () {
                    print(searchController!.text.toString());
                  },
-                 hintText: "Search something",
+
+                 hintText: "Search somethin",
                  editTextController: searchController,
                ),
              ),
