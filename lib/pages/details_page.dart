@@ -1,8 +1,13 @@
+
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:lottie/lottie.dart';
 import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
-
+import 'package:http/http.dart' as http;
 import '../models/image_collections_model.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -19,6 +24,57 @@ class _DetailsPageState extends State<DetailsPage> {
 
   String username ="";
   String urlImg = "";
+
+   _dialogsaveImage(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return Container(
+              child: AlertDialog(
+                actions: [
+                  Container(
+                    child:Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 10,),
+                        Container(
+                          padding: EdgeInsets.all(50),
+                          child: Lottie.asset("assets/images/downloade.json"),
+                        ),
+                        SizedBox(height: 10,),
+                        Text("Success!",style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),),
+                      ],
+                    ),
+                  )
+                ],
+              )
+          );
+        }
+    );
+  }
+
+  late Uint8List _imageBytes;
+
+  Future<void> loadImage() async {
+    var response = await http.get(Uri.parse(urlImg));
+
+    setState(() {
+      _imageBytes = response.bodyBytes;
+    });
+
+  }
+
+  Future<void> _downloadImage(Uint8List url) async {
+    bool result = await ImageGallerySaver.saveImage(url);
+
+    if (result){
+      _dialogsaveImage();
+    }
+  }
+
   _backToFinish(){
     Navigator.of(context).pop(true);
   }
@@ -28,6 +84,7 @@ class _DetailsPageState extends State<DetailsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    loadImage();
     username = widget.imageModell!.user.name;
     urlImg = widget.imageModell!.urls.full;
   }
@@ -86,7 +143,9 @@ class _DetailsPageState extends State<DetailsPage> {
                             icon: Icon(Icons.info_outline,color: Colors.white,size: 30,),
                           ),
                           IconButton(
-                            onPressed: (){},
+                            onPressed: (){
+                              _downloadImage(_imageBytes);
+                            },
                             icon: Icon(Icons.download_for_offline_outlined,color: Colors.white,size: 40,),
                           ),
                           // Container(
