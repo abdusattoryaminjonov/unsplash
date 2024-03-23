@@ -41,7 +41,7 @@ class _InitialPageState extends State<InitialPage> {
           BottomNavigationBarItem(icon: Icon(Icons.home,),label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.collections,), label: ""),
         ],
-        unselectedIconTheme: IconThemeData(color: Colors.grey),
+        unselectedIconTheme: IconThemeData(color: Colors.grey.shade700),
         selectedItemColor: Colors.white,
         backgroundColor: Colors.black,
         iconSize: 35,
