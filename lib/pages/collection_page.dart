@@ -1,14 +1,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
 
+import '../models/image_collections_model.dart';
 import '../services/http_service.dart';
 import '../services/log_sevice.dart';
+import 'details_page.dart';
 
 class CollectionPage extends StatefulWidget {
-  const CollectionPage({super.key});
+
+  final ImageCollections collection;
+
+  const CollectionPage({super.key,required this.collection});
 
   @override
   State<CollectionPage> createState() => _CollectionPageState();
@@ -17,29 +23,47 @@ class CollectionPage extends StatefulWidget {
 class _CollectionPageState extends State<CollectionPage> {
 
   bool isLoading = true;
-  String title = "Nature";
-  ImageModell? imageModell;
-  List<Result> imageModelList = [];
+  String title = "";
+  ImageCollections? imageCollection;
+  List<PreviewPhoto> previewPhotos = [];
+  String? id;
 
-  _apiImageSearchPhotos() async{
-    var response = await Network.GET(Network.API_SEARCH_PHOTOS,Network.paramsSearch());
+  _apiCollection() async{
+    setState(() {
+      imageCollection = widget.collection;
+      title = imageCollection!.title;
+      id = imageCollection!.id.toString();
+      previewPhotos = imageCollection!.previewPhotos;
+    });
+    var response = await Network.GET(Network.API_COLLECTIONS_ID.replaceFirst(':id', '${id}'),Network.paramsCollection());
     LogService.d(response!);
     setState(() {
-      imageModell = Network.parseImageModel(response);
-      imageModelList = imageModell!.results;
+      // imageCollection = Network.parseCollection(response);
+      // previewPhotos =
     });
   }
-  
-  
+
+  Future _callDetailsPage(PreviewPhoto previewPhoto) async {
+    bool result = await Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+      return DetailsPage(previewPhoto:previewPhoto);
+    }));
+
+    if (result) {
+      _apiCollection();
+    }
+  }
+
+
+
   _backToFinish(){
-    print("Qayti");
+    Navigator.of(context).pop(true);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _apiImageSearchPhotos();
+    _apiCollection();
   }
 
   @override
@@ -61,9 +85,9 @@ class _CollectionPageState extends State<CollectionPage> {
         color: Colors.black,
         child: StaggeredGridView.countBuilder(
           crossAxisCount: 2,
-          itemCount: imageModelList.length,
+          itemCount: previewPhotos.length,
           itemBuilder: (context, index) => ImageCard(
-            imageData: imageModelList[index],
+            previewPhotos[index],
           ),
           staggeredTileBuilder: (index) => StaggeredTile.fit(1),
           mainAxisSpacing: 2.0,
@@ -72,60 +96,13 @@ class _CollectionPageState extends State<CollectionPage> {
       ),
     );
   }
-}
 
-class ImageCard extends StatelessWidget {
-  const ImageCard({required this.imageData});
-
-   final Result imageData;
-
-  _callDetailsPage(){
-    print("CLICK");
-  }
-
- @override
-  Widget build(BuildContext context) {
+  Widget ImageCard(PreviewPhoto previewPhoto) {
     return GestureDetector(
-      onTap: (){
-        _callDetailsPage();
-      },
-      child: Stack(
-          children: [
-            Image.network(imageData.urls.full, fit: BoxFit.cover),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomRight,
-                      colors: [
-                        Colors.black.withOpacity(0.9),
-                        Colors.black.withOpacity(0.8),
-                        Colors.black.withOpacity(0.7),
-                        Colors.black.withOpacity(0.6),
-                        Colors.black.withOpacity(0.5),
-                        Colors.black.withOpacity(0.4),
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.2),
-                        Colors.black.withOpacity(0.1),
-                        Colors.black.withOpacity(0.05),
-                        Colors.black.withOpacity(0.02),
-                      ]
-                  ),
-                ),
-                child: Text(imageData.user.username,style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-                ),
-              ),
-            ),
-          ]
-      )
+        onTap: (){
+          _callDetailsPage(previewPhoto);
+        },
+        child: Image.network(previewPhoto.urls.full, fit: BoxFit.cover),
     );
   }
 }
-

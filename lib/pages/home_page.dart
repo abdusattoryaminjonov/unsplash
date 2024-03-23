@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable_search_bar/expandable_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart';
+import 'package:lottie/lottie.dart';
 import 'package:unsplash/models/image_model.dart';
 import 'package:unsplash/pages/details_page.dart';
 
@@ -24,24 +26,35 @@ class _HomePageState extends State<HomePage> {
   ImageModell? imageModell;
   List<Result> imageModelList = [];
 
-  apiImageSearchPhotos() async{
+  _apiImageSearchPhotos() async{
     var response = await Network.GET(Network.API_SEARCH_PHOTOS,Network.paramsSearch());
     LogService.d(response!);
     setState(() {
       imageModell = Network.parseImageModel(response);
       imageModelList = imageModell!.results;
+      isLoading = false;
     });
   }
 
-  _backToFinish() {
-    print("Qayti");
+  Future _callDetailsPage(Result imageData) async {
+    bool result = await Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+      return DetailsPage(imageModell:imageData);
+    }));
+
+    if (result) {
+      _apiImageSearchPhotos();
+    }
+  }
+
+  Future<void> _handleRefresh() async {
+    _apiImageSearchPhotos();
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    apiImageSearchPhotos();
+    _apiImageSearchPhotos();
   }
   @override
   Widget build(BuildContext context) {
@@ -66,46 +79,50 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
-        color: Colors.black,
-        child: StaggeredGridView.countBuilder(
-          crossAxisCount: 2,
-          itemCount: imageModelList.length,
-          itemBuilder: (context, index) => ImageCard(
-            imageData: imageModelList[index],
-          ),
-          staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-          mainAxisSpacing: 1.1,
-          crossAxisSpacing: 1.1,
+          color: Colors.black,
+        child: Stack(
+          children: [
+
+          RefreshIndicator(
+            onRefresh: _handleRefresh,
+              child: StaggeredGridView.countBuilder(
+                crossAxisCount: 2,
+                itemCount: imageModelList.length,
+                itemBuilder: (context, index) => ImageCard(
+                  imageModelList[index],
+                ),
+                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                mainAxisSpacing: 1.1,
+                crossAxisSpacing: 1.1,
+              ),
+            ),
+            isLoading
+                ? Center(
+              child: Lottie.asset("assets/images/loading.json",width: 150),
+            )
+                : SizedBox.shrink(),
+         ],
         ),
       ),
     );
   }
-}
-
-class ImageCard extends StatelessWidget {
-  const ImageCard({required this.imageData});
-
-  // Future _callDetailsPage(ImageModel imageModel) async {
-  //   bool result = await Navigator.of(context)
-  //       .push(MaterialPageRoute(builder: (BuildContext context) {
-  //     return DetailsPage(: post);
-  //   }));
-  //
-  //   if (result) {
-  //     _HomePageState().apiImageSearchPhotos();
-  //   }
-  // }
-
-  final Result imageData;
-  @override
-  Widget build(BuildContext context) {
+  Widget ImageCard(Result imageData) {
     return GestureDetector(
         onTap: (){
-          //_callDetailsPage();
+          _callDetailsPage(imageData);
         },
         child: Stack(
             children: [
-              Image.network(imageData.urls.full, fit: BoxFit.cover),
+              CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: imageData.urls.full,
+                placeholder: (context, url) =>Container(
+                    padding: EdgeInsets.all(50),
+                    child: Lottie.asset("assets/images/placeholder.json")
+                ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+              // Image.network(imageData.urls.full, fit: BoxFit.cover),
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -130,10 +147,14 @@ class ImageCard extends StatelessWidget {
                         ]
                     ),
                   ),
-                  child: Text(imageData.user.username,style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
+                  child: Row(
+                    children: [
+                      Text(imageData.user.name,style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -141,4 +162,13 @@ class ImageCard extends StatelessWidget {
         )
     );
   }
+
 }
+
+// class ImageCard extends StatelessWidget {
+//   const ImageCard({required this.imageData});
+//
+//   final Result imageData;
+//   @override
+//
+// }

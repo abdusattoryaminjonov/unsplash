@@ -1,10 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:unsplash/models/image_model.dart';
+import 'package:unsplash/models/image_collection_model.dart';
+import 'package:unsplash/models/image_search_model.dart';
+
+import '../models/image_collections_model.dart';
 
 class DetailsPage extends StatefulWidget {
+  final Result? imageModell;
+  final PreviewPhoto? previewPhoto;
 
-  const DetailsPage({super.key});
+  const DetailsPage({super.key, this.imageModell,this.previewPhoto});
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
@@ -12,11 +17,10 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
 
-  String username = "Lucas Gallone";
-  String urlImg = "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1528&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-
+  String username ="";
+  String urlImg = "";
   _backToFinish(){
-    print("Qayti");
+    Navigator.of(context).pop(true);
   }
 
 
@@ -24,6 +28,8 @@ class _DetailsPageState extends State<DetailsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    username = widget.imageModell!.user.name;
+    urlImg = widget.imageModell!.urls.full;
   }
 
   @override

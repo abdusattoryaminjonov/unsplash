@@ -62,8 +62,10 @@ class Network{
     Map<String, String> params = Map();
     params.addAll({
       'client_id': CLIENT_ID,
-      'page':'1',
-      'query':'unsplash'
+      'page':'8',
+      'query':'unsplash',
+    'per_page':'20'
+
     });
     return params;
   }
@@ -72,7 +74,7 @@ class Network{
     Map<String, String> params = Map();
     params.addAll({
       'client_id': CLIENT_ID,
-      'page':'1',
+      'page':'8',
       'per_page':'20'
     });
     return params;
