@@ -38,11 +38,14 @@ class _InitialPageState extends State<InitialPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home),label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.business), label: "Business"),
+          BottomNavigationBarItem(icon: Icon(Icons.home,),label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.collections,), label: ""),
         ],
+        unselectedIconTheme: IconThemeData(color: Colors.grey),
+        selectedItemColor: Colors.white,
+        backgroundColor: Colors.black,
+        iconSize: 35,
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;

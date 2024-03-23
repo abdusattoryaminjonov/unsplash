@@ -66,8 +66,8 @@ class _HomePageState extends State<HomePage> {
           child: Center(
             child: ExpandableSearchBar(
               backgroundColor: Colors.white,
-              iconColor: Colors.white,
-              iconBackgroundColor: Colors.black,
+              iconColor: Colors.black87,
+              iconBackgroundColor: Colors.white,
               width: MediaQuery.of(context).size.width,
               onTap: () {
                 print(searchController!.text.toString());
