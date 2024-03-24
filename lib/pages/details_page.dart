@@ -71,7 +71,6 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   Future<void> _downloadImage(Uint8List url) async {
-    final tempDir = await getTemporaryDirectory();
     bool result = await ImageGallerySaver.saveImage(url);
 
     ScaffoldMessenger.of(context).showSnackBar(
