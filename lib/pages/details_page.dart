@@ -1,4 +1,6 @@
+
 import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -12,17 +14,20 @@ class DetailsPage extends StatefulWidget {
   final Result? imageModell;
   final PreviewPhoto? previewPhoto;
 
-  const DetailsPage({Key? key, this.imageModell, this.previewPhoto}) : super(key: key);
+  const DetailsPage({super.key, this.imageModell,this.previewPhoto});
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  String username = "";
+
+  Result? _imgModell;
+
+  String username ="";
   String urlImg = "";
 
-  _dialogsaveImage() {
+   _dialogsaveImage(){
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -54,34 +59,91 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  late Uint8List _imageBytes = Uint8List(0);
+  late Uint8List _imageBytes;
 
   Future<void> loadImage() async {
     var response = await http.get(Uri.parse(urlImg));
+
     setState(() {
       _imageBytes = response.bodyBytes;
     });
+
   }
 
   Future<void> _downloadImage(Uint8List url) async {
-    if (_imageBytes.isNotEmpty) {
-      bool result = await ImageGallerySaver.saveImage(url);
+    final tempDir = await getTemporaryDirectory();
+    bool result = await ImageGallerySaver.saveImage(url);
 
-      if (result) {
-        _dialogsaveImage();
-      }
-    } else {
-      print('Image bytes are empty, cannot download.');
-      // You can show a message or handle this case as needed.
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Downloaded to Gallery!")),
+    );
   }
 
-  _backToFinish() {
+  _infoImage(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return Container(
+              width: 100,
+              height: 100,
+              child: AlertDialog(
+                actions: [
+                  Container(
+                    padding: EdgeInsets.only(right: 35),
+                    child:Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 50,),
+                        Container(
+                          child: Text(_imgModell!.user.name,style: TextStyle(
+                              fontSize: 20,
+                            fontWeight: FontWeight.bold
+                          ),)
+                        ),
+                        SizedBox(height: 50,),
+                        // Text(_imgModell!.user.name,style: TextStyle(
+                        //     fontSize: 20,
+                        //     fontWeight: FontWeight.bold
+                        // ),),
+                        // Text(_imgModell!.user.username,style: TextStyle(
+                        //     fontSize: 15
+                        // ),),
+                        // Text(_imgModell!.user.bio!,style: TextStyle(
+                        //     fontSize: 15,
+                        //    overflow: TextOverflow.ellipsis,
+                        // ),),
+                        MaterialButton(
+                            child:Container(
+                                width: 100,
+                                height: 40,
+                                color: Colors.deepPurpleAccent,
+                                child: Center(
+                                  child: Text("pass",style: TextStyle(
+                                    color: Colors.white,
+                                  ),),
+                                )
+                            ),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            }),
+                      ],
+                    ),
+                  )
+                ],
+              )
+          );
+        }
+    );
+  }
+
+  _backToFinish(){
     Navigator.of(context).pop(true);
   }
 
+
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     loadImage();
     username = widget.imageModell!.user.name;
@@ -91,23 +153,20 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
+        extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: Text(
-          username,
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text(username,style: TextStyle(color: Colors.white),),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () {
-            _backToFinish();
-          },
+            icon: Icon(Icons.arrow_back_ios,color: Colors.white,),
+            onPressed: () {
+              _backToFinish();
+            }
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: (){},
             icon: Icon(Icons.ios_share),
             color: Colors.white,
           ),
@@ -115,6 +174,7 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: Column(
         children: [
+
           Expanded(
             child: Stack(
               children: [
@@ -122,8 +182,8 @@ class _DetailsPageState extends State<DetailsPage> {
                   child: new CachedNetworkImage(
                     imageUrl: urlImg,
                     placeholder: (context, url) => Image(
-                      image: AssetImage("assets/images/placeholder.png"),
-                      fit: BoxFit.cover,
+                        image: AssetImage("assets/images/placeholder.png"),
+                        fit: BoxFit.cover
                     ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     height: MediaQuery.of(context).size.height,
@@ -135,27 +195,36 @@ class _DetailsPageState extends State<DetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                      padding: EdgeInsets.symmetric(vertical: 30,horizontal: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.info_outline, color: Colors.white, size: 30),
+                            onPressed: (){
+                              _infoImage();
+                            },
+                            icon: Icon(Icons.info_outline,color: Colors.white,size: 30,),
                           ),
                           IconButton(
-                            onPressed: () {
+                            onPressed: (){
                               _downloadImage(_imageBytes);
                             },
-                            icon: Icon(Icons.download_for_offline_outlined, color: Colors.white, size: 40),
+                            icon: Icon(Icons.download_for_offline_outlined,color: Colors.white,size: 40,),
                           ),
+                          // Container(
+                          //   margin: EdgeInsets.only(bottom: 30,right: 20),
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.white,
+                          //     shape: BoxShape.circle,
+                          //   ),
+                          // )
                         ],
                       ),
                     ),
                   ],
                 )
               ],
-            ),
+            )
           ),
         ],
       ),
