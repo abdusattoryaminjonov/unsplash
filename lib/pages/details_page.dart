@@ -1,11 +1,11 @@
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:lottie/lottie.dart';
-import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
 import 'package:http/http.dart' as http;
 import '../models/image_collections_model.dart';
@@ -135,6 +135,16 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
+  // _shareNetworkImage(String url) async{
+  //   final uri = Uri.parse(url);
+  //   final response = await http.get(uri);
+  //   final imageBytes = response.bodyBytes;
+  //   final t = await getTemporaryDirectory();
+  //   final path = '${t.path}/sharedImage.jpg';
+  //   File(path).writeAsBytesSync(imageBytes);
+  //
+  // }
+
   _backToFinish(){
     Navigator.of(context).pop(true);
   }
@@ -165,7 +175,9 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
         actions: [
           IconButton(
-            onPressed: (){},
+            onPressed: (){
+              // _shareNetworkImage(urlImg);
+            },
             icon: Icon(Icons.ios_share),
             color: Colors.white,
           ),
