@@ -63,22 +63,24 @@ class _HomePageState extends State<HomePage> {
         titleTextStyle: TextStyle(color: Colors.white),
         backgroundColor: Colors.black,
         title: Container(
-          child: Center(
-            child: ExpandableSearchBar(
-              backgroundColor: Colors.white,
-              iconColor: Colors.black87,
-              iconBackgroundColor: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              onTap: () {
-                print(searchController!.text.toString());
-              },
-              hintText: "Search something",
-              editTextController: searchController,
-            ),
+          height: 50,
+          padding: EdgeInsets.only(left: 10, right: 10),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.white.withOpacity(0.2)),
+          child: TextField(
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              icon: Icon(Icons.search,color: Colors.grey,),
+                hintText: "Search photos, collections, users",
+                border: InputBorder.none,
+                hintStyle:
+                TextStyle(fontSize: 15, color: Colors.grey)),
           ),
         ),
       ),
       body: Container(
+        padding: EdgeInsets.only(top: 10),
           color: Colors.black,
         child: Stack(
           children: [

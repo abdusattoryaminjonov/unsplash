@@ -45,65 +45,59 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-   _infoImage(){
-    showDialog(
-        context: context,
-        builder: (BuildContext context){
-          return Container(
-              width: 100,
-              height: 100,
-              child: AlertDialog(
-                actions: [
-                  Container(
-                    padding: EdgeInsets.only(right: 35),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: 20,),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: Text(_imgModell!.user.username,style: TextStyle(
-                              overflow: TextOverflow.ellipsis,
-                              fontSize: 10,
-                            fontWeight: FontWeight.bold
-                          ),)
-                        ),
-                        // SizedBox(height: 50,),
-                        MaterialButton(
-                            child:Container(
-                                width: 100,
-                                height: 40,
-                                color: Colors.deepPurpleAccent,
-                                child: Center(
-                                  child: Text("pass",style: TextStyle(
-                                    color: Colors.white,
-                                  ),),
-                                )
-                            ),
-                            onPressed: (){
-                              Navigator.of(context).pop();
-                            }),
-                      ],
-                    ),
-                  )
-                ],
-              )
-          );
-        }
-    );
-  }
 
   _backToFinish(){
     Navigator.of(context).pop(true);
   }
 
+  _infoData(){
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context){
+      return Container(
+        padding: EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width/2,
+        height: MediaQuery.of(context).size.height/3,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                child: Text(_imgModell!.user.username,style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),),
+              ),
+              Container(
+                  child:Text(_imgModell!.altDescription,style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),),
+              )
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    username = widget.imageModell!.user.name;
-    urlImg = widget.imageModell!.urls.full;
+    _imgModell = widget.imageModell;
+    username = _imgModell!.user.name;
+    urlImg = _imgModell!.urls.full;
   }
 
   @override
@@ -160,20 +154,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             //   SImage info Button
                           IconButton(
                             onPressed: (){
-                              showModalBottomSheet(context: context, builder: (BuildContext context){
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: Text(" Foziljon "),
-                                    ),
-                                    Container(
-                                        child:Text("Abdusattor")
-                                    )
-                                  ],
-                                );
-                              });
+                              _infoData();
                             },
                             icon: Icon(Icons.info_outline,color: Colors.white,size: 30,),
                           ),
