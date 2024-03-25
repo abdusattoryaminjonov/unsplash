@@ -1,11 +1,12 @@
 
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:lottie/lottie.dart';
+import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
 import 'package:http/http.dart' as http;
 import '../models/image_collections_model.dart';
@@ -23,9 +24,21 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
 
   Result? _imgModell;
-
   String username ="";
   String urlImg = "";
+            //  saveNetworkImage function to save url image
+
+  _saveNetworkImage() async {
+    var response = await Dio().get(_imgModell!.urls.full,
+        options: Options(responseType: ResponseType.bytes));
+    final result = await ImageGallerySaver.saveImage(
+        Uint8List.fromList(response.data),
+        quality: 60,
+        name: "hello");
+    print(result);
+  }
+
+            // dialog save Image function to show result
 
    _dialogsaveImage(){
     showDialog(
@@ -59,26 +72,8 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  late Uint8List _imageBytes;
 
-  Future<void> loadImage() async {
-    var response = await http.get(Uri.parse(urlImg));
-
-    setState(() {
-      _imageBytes = response.bodyBytes;
-    });
-
-  }
-
-  Future<void> _downloadImage(Uint8List url) async {
-    bool result = await ImageGallerySaver.saveImage(url);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Downloaded to Gallery!")),
-    );
-  }
-
-  _infoImage(){
+   _infoImage(){
     showDialog(
         context: context,
         builder: (BuildContext context){
@@ -100,17 +95,6 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),)
                         ),
                         SizedBox(height: 50,),
-                        // Text(_imgModell!.user.name,style: TextStyle(
-                        //     fontSize: 20,
-                        //     fontWeight: FontWeight.bold
-                        // ),),
-                        // Text(_imgModell!.user.username,style: TextStyle(
-                        //     fontSize: 15
-                        // ),),
-                        // Text(_imgModell!.user.bio!,style: TextStyle(
-                        //     fontSize: 15,
-                        //    overflow: TextOverflow.ellipsis,
-                        // ),),
                         MaterialButton(
                             child:Container(
                                 width: 100,
@@ -135,26 +119,15 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  // _shareNetworkImage(String url) async{
-  //   final uri = Uri.parse(url);
-  //   final response = await http.get(uri);
-  //   final imageBytes = response.bodyBytes;
-  //   final t = await getTemporaryDirectory();
-  //   final path = '${t.path}/sharedImage.jpg';
-  //   File(path).writeAsBytesSync(imageBytes);
-  //
-  // }
-
   _backToFinish(){
     Navigator.of(context).pop(true);
   }
-
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadImage();
+
     username = widget.imageModell!.user.name;
     urlImg = widget.imageModell!.urls.full;
   }
@@ -174,10 +147,10 @@ class _DetailsPageState extends State<DetailsPage> {
             }
         ),
         actions: [
+
+          //   Share button
           IconButton(
-            onPressed: (){
-              // _shareNetworkImage(urlImg);
-            },
+            onPressed: (){},
             icon: Icon(Icons.ios_share),
             color: Colors.white,
           ),
@@ -185,7 +158,6 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: Column(
         children: [
-
           Expanded(
             child: Stack(
               children: [
@@ -210,25 +182,20 @@ class _DetailsPageState extends State<DetailsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                            //   Show detailes Button
                           IconButton(
                             onPressed: (){
                               _infoImage();
                             },
                             icon: Icon(Icons.info_outline,color: Colors.white,size: 30,),
                           ),
+                            //   Save Button
                           IconButton(
                             onPressed: (){
-                              _downloadImage(_imageBytes);
+                              _saveNetworkImage();
                             },
                             icon: Icon(Icons.download_for_offline_outlined,color: Colors.white,size: 40,),
                           ),
-                          // Container(
-                          //   margin: EdgeInsets.only(bottom: 30,right: 20),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.white,
-                          //     shape: BoxShape.circle,
-                          //   ),
-                          // )
                         ],
                       ),
                     ),
