@@ -132,6 +132,7 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: Column(
         children: [
+
           Expanded(
             child: Stack(
               children: [
@@ -156,10 +157,23 @@ class _DetailsPageState extends State<DetailsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                            //   Show detailes Button
+                            //   SImage info Button
                           IconButton(
                             onPressed: (){
-                              _infoImage();
+                              showModalBottomSheet(context: context, builder: (BuildContext context){
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: Text(" Foziljon "),
+                                    ),
+                                    Container(
+                                        child:Text("Abdusattor")
+                                    )
+                                  ],
+                                );
+                              });
                             },
                             icon: Icon(Icons.info_outline,color: Colors.white,size: 30,),
                           ),
