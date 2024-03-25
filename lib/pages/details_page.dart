@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:unsplash/services/log_sevice.dart';
 import '../models/image_collections_model.dart';
 
 class DetailsPage extends StatefulWidget {
@@ -29,49 +30,20 @@ class _DetailsPageState extends State<DetailsPage> {
             //  saveNetworkImage function to save url image
 
   _saveNetworkImage() async {
-    var response = await Dio().get(_imgModell!.urls.full,
+    var response = await Dio().get(urlImg,
         options: Options(responseType: ResponseType.bytes));
     final result = await ImageGallerySaver.saveImage(
         Uint8List.fromList(response.data),
         quality: 60,
         name: "hello");
-    print(result);
-  }
-
-            // dialog save Image function to show result
-
-   _dialogsaveImage(){
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          actions: [
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 10),
-                  Container(
-                    padding: EdgeInsets.all(50),
-                    child: Lottie.asset("assets/images/downloade.json"),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Success!",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
-      },
+    LogService.i(result);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Image saved!!!",style: TextStyle(
+        color: Colors.black26,
+        fontSize: 20,
+      ),)),
     );
   }
-
 
    _infoImage(){
     showDialog(
@@ -87,14 +59,16 @@ class _DetailsPageState extends State<DetailsPage> {
                     child:Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: 50,),
+                        SizedBox(height: 20,),
                         Container(
-                          child: Text(_imgModell!.user.name,style: TextStyle(
-                              fontSize: 20,
+                          padding: EdgeInsets.all(5),
+                          child: Text(_imgModell!.user.username,style: TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 10,
                             fontWeight: FontWeight.bold
                           ),)
                         ),
-                        SizedBox(height: 50,),
+                        // SizedBox(height: 50,),
                         MaterialButton(
                             child:Container(
                                 width: 100,
