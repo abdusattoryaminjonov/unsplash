@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
+import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_collections_model.dart';
 import 'package:unsplash/pages/collection_page.dart';
 
@@ -22,17 +23,22 @@ class _CollectionsPageState extends State<CollectionsPage> {
   List<ImageCollections> imageCollections = [];
 
   _apiImageCollections() async{
-    var response = await Network.GET(Network.API_COLLECTIONS,Network.paramsCollections());
-    LogService.d(response!);
-    setState(() {
-      imageCollections = Network.parseCollections(response);
-      isLoading = false;
-    });
-
+    try {
+      var response = await Network.GET(
+          Network.API_COLLECTIONS, Network.paramsCollections());
+      setState(() {
+        imageCollections = Network.parseCollections(response!);
+        isLoading = false;
+      });
+      LogService.d(response!);
+    }catch (e){
+      LogService.e(e.toString());
+    }
   }
-  Future _callCollectionPage(ImageCollections imageData) async {
+
+  Future _callCollectionPage(ImageCollections collections) async {
     bool result = await Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
-      return CollectionPage(collection: imageData);
+      return CollectionPage(collections: collections);
     }));
 
     if (result) {
@@ -144,7 +150,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                 ),
                 child: Row(
                   children: [
-                    Text(imageCollections.user.name,style: TextStyle(
+                    Text(imageCollections.title,style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
                     ),

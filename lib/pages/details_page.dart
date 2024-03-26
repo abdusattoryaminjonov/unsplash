@@ -56,7 +56,7 @@ class _DetailsPageState extends State<DetailsPage> {
         builder: (BuildContext context){
       return Container(
         padding: EdgeInsets.all(10),
-        width: MediaQuery.of(context).size.width/2,
+        width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height/3,
         decoration: BoxDecoration(
           color: Colors.black,

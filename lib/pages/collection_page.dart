@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:lottie/lottie.dart';
 import 'package:unsplash/models/image_collection_model.dart';
 import 'package:unsplash/models/image_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
@@ -11,9 +12,9 @@ import 'details_page.dart';
 
 class CollectionPage extends StatefulWidget {
 
-  final ImageCollections collection;
+  final ImageCollections collections;
 
-  const CollectionPage({super.key,required this.collection});
+  const CollectionPage({super.key,required this.collections});
 
   @override
   State<CollectionPage> createState() => _CollectionPageState();
@@ -23,23 +24,26 @@ class _CollectionPageState extends State<CollectionPage> {
 
   bool isLoading = true;
   String title = "";
-  ImageCollections? imageCollection;
+  List<ImageCollection>? imageCollection;
   List<PreviewPhoto> previewPhotos = [];
   String? id;
 
   _apiCollection() async{
-    setState(() {
-      imageCollection = widget.collection;
-      title = imageCollection!.title;
-      id = imageCollection!.id.toString();
-      previewPhotos = imageCollection!.previewPhotos;
-    });
-    var response = await Network.GET(Network.API_COLLECTIONS_ID.replaceFirst(':id', '${id}'),Network.paramsCollection());
-    LogService.d(response!);
-    setState(() {
-      // imageCollection = Network.parseCollection(response);
-      // previewPhotos =
-    });
+    try {
+      setState(() {
+        id = widget.collections.id;
+        title = widget.collections.title;
+      });
+      var response = await Network.GET(
+          Network.API_COLLECTIONS_ID.replaceFirst(':id', '${id}'),
+          Network.paramsCollection());
+      setState(() {
+        imageCollection = Network.parseCollection(response!);
+      });
+      LogService.d(response!);
+    }catch (e){
+      LogService.e(e.toString());
+    }
   }
 
   Future _callDetailsPage(PreviewPhoto previewPhoto) async {
@@ -56,6 +60,10 @@ class _CollectionPageState extends State<CollectionPage> {
 
   _backToFinish(){
     Navigator.of(context).pop(true);
+  }
+
+  Future<void> _handleRefresh() async {
+    _apiCollection();
   }
 
   @override
@@ -81,16 +89,29 @@ class _CollectionPageState extends State<CollectionPage> {
       ),
 
       body: Container(
+        padding: EdgeInsets.only(top: 10),
         color: Colors.black,
-        child: StaggeredGridView.countBuilder(
-          crossAxisCount: 2,
-          itemCount: previewPhotos.length,
-          itemBuilder: (context, index) => ImageCard(
-            previewPhotos[index],
-          ),
-          staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-          mainAxisSpacing: 2.0,
-          crossAxisSpacing: 2.0,
+        child: Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: _handleRefresh,
+              child: StaggeredGridView.countBuilder(
+                crossAxisCount: 2,
+                itemCount: previewPhotos.length,
+                itemBuilder: (context, index) => ImageCard(
+                  previewPhotos[index],
+                ),
+                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                mainAxisSpacing: 1.1,
+                crossAxisSpacing: 1.1,
+              ),
+            ),
+            isLoading
+                ? Center(
+              child: Lottie.asset("assets/images/loading.json",width: 150),
+            )
+                : SizedBox.shrink(),
+          ],
         ),
       ),
     );

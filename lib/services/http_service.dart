@@ -1,54 +1,106 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:unsplash/models/image_collections_model.dart';
 import 'package:unsplash/models/image_search_model.dart';
-
 import '../models/image_collection_model.dart';
+import 'http_helper.dart';
 
 class Network{
-  static String BASE = "api.unsplash.com";
+  static bool isTester = true;
+  static String BASE_DEV= "api.unsplash.com";
+  static String BASE_PRO = "api.unsplash.com";
   static String CLIENT_ID = "DFBUdDTjQJ8BSer4c6X_XuspGXYg1GgwzRND8Agd7QQ";
   static Map<String,String> headers = {'Content-Type':'application/json; charset=UTF-8'};
 
+  static final client = InterceptedClient.build(
+    interceptors: [HttpInterceptor()],
+    retryPolicy: HttpRetryPolicy(),
+  );
 
+  static String getServer() {
+    if (isTester) return BASE_DEV;
+    return BASE_PRO ;
+  }
 
   /* Http Requests */
   static Future<String?> GET(String api, Map<String, String> params) async{
-    var uri = Uri.http(BASE, api, params);
-    print(uri);
-    var response = await get(uri, headers: headers);
-    if(response.statusCode == 200){
-      return response.body;
+    try {
+      var uri = Uri.https(getServer(), api, params);
+      var response = await client.get(uri);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        _throwException(response);
+      }
+    } on SocketException catch (_) {
+      // if the network connection fails
+      rethrow;
     }
-    return null;
   }
 
   static Future<String?> POST(String api, Map<String, String> params) async{
-    var uri = Uri.http(BASE, api);
-    var response = await post(uri, headers: headers, body: jsonEncode(params));
-    if(response.statusCode == 200 || response.statusCode == 201){
-      return response.body;
+    try {
+      var uri = Uri.https(getServer(), api, params);
+      var response = await client.post(uri, body: jsonEncode(params));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.body;
+      } else {
+        _throwException(response);
+      }
+    } on SocketException catch (_) {
+      // if the network connection fails
+      rethrow;
     }
-    return null;
   }
 
-  static Future<String?> PUT(String api, Map<String, String> params) async{
-    var uri = Uri.http(BASE, api);
-    var response = await put(uri, headers: headers, body: jsonEncode(params));
-    if(response.statusCode == 200){
-      return response.body;
+  static Future<String?> PUT(String api, Map<String, String> params) async {
+    try {
+      var uri = Uri.https(getServer(), api, params);
+      var response = await client.put(uri, body: jsonEncode(params));
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return response.body;
+      } else {
+        _throwException(response);
+      }
+    } on SocketException catch (_) {
+      // if the network connection fails
+      rethrow;
     }
-    return null;
   }
 
   static Future<String?> DEL(String api, Map<String, String> params) async{
-    var uri = Uri.http(BASE, api, params);
-    var response = await delete(uri, headers: headers);
-    if(response.statusCode == 200){
-      return response.body;
+    try {
+      var uri = Uri.https(getServer(), api, params);
+      var response = await client.delete(uri);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        _throwException(response);
+      }
+    } on SocketException catch (_) {
+      // if the network connection fails
+      rethrow;
     }
-    return null;
+  }
+
+  static _throwException(Response response) {
+    String reason = response.reasonPhrase!;
+    switch (response.statusCode) {
+      case 400:
+        throw BadRequestException(reason);
+      case 401:
+        throw InvalidInputException(reason);
+      case 403:
+        throw UnauthorisedException(reason);
+      case 404:
+        throw FetchDataException(reason);
+      case 500:
+      default:
+        throw FetchDataException(reason);
+    }
   }
 
   /* Http Apis*/

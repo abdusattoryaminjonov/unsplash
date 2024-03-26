@@ -27,13 +27,18 @@ class _HomePageState extends State<HomePage> {
   List<Result> imageModelList = [];
 
   _apiImageSearchPhotos() async{
-    var response = await Network.GET(Network.API_SEARCH_PHOTOS,Network.paramsSearch());
-    LogService.d(response!);
-    setState(() {
-      imageModell = Network.parseImageModel(response);
-      imageModelList = imageModell!.results;
-      isLoading = false;
-    });
+    try {
+      var response = await Network.GET(
+          Network.API_SEARCH_PHOTOS, Network.paramsSearch());
+      setState(() {
+        imageModell = Network.parseImageModel(response!);
+        imageModelList = imageModell!.results;
+        isLoading = false;
+      });
+      LogService.d(response!);
+    }catch (e){
+      LogService.e(e.toString());
+    }
   }
 
   Future _callDetailsPage(Result imageData) async {
