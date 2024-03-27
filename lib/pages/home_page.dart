@@ -120,17 +120,19 @@ class _HomePageState extends State<HomePage> {
         },
         child: Stack(
             children: [
-              Hero(
-                  tag: imageData.id,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    imageUrl: imageData.urls.full,
-                    placeholder: (context, url) =>Container(
-                        padding: EdgeInsets.all(50),
-                        child: Lottie.asset("assets/images/placeholder.json")
+              Container(
+                child: Hero(
+                    tag: imageData.id,
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: imageData.urls.full,
+                      placeholder: (context, url) =>Container(
+                          padding: EdgeInsets.all(50),
+                          child: Lottie.asset("assets/images/placeholder.json")
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
+                ),
               ),
 
               // Image.network(imageData.urls.full, fit: BoxFit.cover),

@@ -125,13 +125,12 @@ class _DetailsPageState extends State<DetailsPage> {
       ),
       body: Column(
         children: [
-
           Expanded(
             child: Stack(
               children: [
                 Container(
                   child: Hero(
-                    tag: urlImg,
+                    tag: _imgModell!.id,
                     child: new CachedNetworkImage(
                       imageUrl: urlImg,
                       placeholder: (context, url) => Image(
