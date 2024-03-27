@@ -8,7 +8,7 @@ import 'log_sevice.dart';
 
 
 class HttpInterceptor implements InterceptorContract {
-  static String API_KEY = "live_25MQkrVdHQyw0AcUzRc7yxgCV3hG5Wvt0XcYPPFlJHEj7a8zS6YfEed4jkO6p6cB";
+  static String API_KEY = "DFBUdDTjQJ8BSer4c6X_XuspGXYg1GgwzRND8Agd7QQ";
 
   // We need to intercept request
   @override

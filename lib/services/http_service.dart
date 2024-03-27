@@ -12,7 +12,6 @@ class Network{
   static bool isTester = true;
   static String BASE_DEV= "api.unsplash.com";
   static String BASE_PRO = "api.unsplash.com";
-  static String CLIENT_ID = "DFBUdDTjQJ8BSer4c6X_XuspGXYg1GgwzRND8Agd7QQ";
   static Map<String,String> headers = {'Content-Type':'application/json; charset=UTF-8'};
 
   static final client = InterceptedClient.build(
@@ -113,7 +112,7 @@ class Network{
   static Map<String, String> paramsSearch() {
     Map<String, String> params = Map();
     params.addAll({
-      'client_id': CLIENT_ID,
+      'client_id': HttpInterceptor.API_KEY,
       'page':'8',
       'query':'unsplash',
     'per_page':'20'
@@ -125,7 +124,7 @@ class Network{
   static Map<String, String> paramsCollections() {
     Map<String, String> params = Map();
     params.addAll({
-      'client_id': CLIENT_ID,
+      'client_id': HttpInterceptor.API_KEY,
       'page':'8',
       'per_page':'20'
     });
@@ -135,7 +134,7 @@ class Network{
   static Map<String, String> paramsCollection() {
     Map<String, String> params = Map();
     params.addAll({
-      'client_id': CLIENT_ID,
+      'client_id': HttpInterceptor.API_KEY,
       'page':'1',
       'per_page':'20',
       'orientation':'landscape'
