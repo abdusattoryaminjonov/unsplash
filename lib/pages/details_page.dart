@@ -1,6 +1,5 @@
 
 import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -131,16 +130,19 @@ class _DetailsPageState extends State<DetailsPage> {
             child: Stack(
               children: [
                 Container(
-                  child: new CachedNetworkImage(
-                    imageUrl: urlImg,
-                    placeholder: (context, url) => Image(
-                        image: AssetImage("assets/images/placeholder.png"),
-                        fit: BoxFit.cover
+                  child: Hero(
+                    tag: urlImg,
+                    child: new CachedNetworkImage(
+                      imageUrl: urlImg,
+                      placeholder: (context, url) => Image(
+                          image: AssetImage("assets/images/placeholder.png"),
+                          fit: BoxFit.cover
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.cover,
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
                   ),
                 ),
                 Column(
