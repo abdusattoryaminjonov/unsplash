@@ -22,20 +22,23 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController? searchController = TextEditingController();
 
   bool isLoading = true;
-  String title = "Nature";
+  String title = "google";
   ImageModell? imageModell;
   List<Result> imageModelList = [];
+  ScrollController scrollController = ScrollController();
+  int currentPage =0;
 
   _apiImageSearchPhotos() async{
     try {
       var response = await Network.GET(
-          Network.API_SEARCH_PHOTOS, Network.paramsSearch());
+          Network.API_SEARCH_PHOTOS, Network.paramsSearch(title,currentPage));
       setState(() {
         imageModell = Network.parseImageModel(response!);
-        imageModelList = imageModell!.results;
+        imageModelList.addAll( imageModell!.results);
         isLoading = false;
       });
-      LogService.d(response!);
+      _scroll();
+      LogService.d(imageModelList.length.toString());
     }catch (e){
       LogService.e(e.toString());
     }
@@ -51,14 +54,31 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /* Refresh function */
   Future<void> _handleRefresh() async {
+    imageModelList.clear();
+    if(searchController!.text != ''){
+      title = searchController!.text;
+    }
     _apiImageSearchPhotos();
+  }
+
+  /* Pagination function */
+  _scroll(){
+    scrollController.addListener(() {
+      if(scrollController.position.maxScrollExtent - scrollController.offset <= 10){
+        print(currentPage);
+        currentPage+=1;
+        _apiImageSearchPhotos();
+      }
+    });
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _apiImageSearchPhotos();
   }
   @override
@@ -74,6 +94,7 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(15),
               color: Colors.white.withOpacity(0.2)),
           child: TextField(
+            controller: searchController,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               icon: Icon(Icons.search,color: Colors.grey,),
@@ -81,9 +102,13 @@ class _HomePageState extends State<HomePage> {
                 border: InputBorder.none,
                 hintStyle:
                 TextStyle(fontSize: 15, color: Colors.grey)),
+            onChanged: (value){
+              _handleRefresh();
+            }
           ),
         ),
       ),
+
       body: Container(
         padding: EdgeInsets.only(top: 10),
           color: Colors.black,
@@ -93,6 +118,7 @@ class _HomePageState extends State<HomePage> {
           RefreshIndicator(
             onRefresh: _handleRefresh,
               child: StaggeredGridView.countBuilder(
+                controller: scrollController,
                 crossAxisCount: 2,
                 itemCount: imageModelList.length,
                 itemBuilder: (context, index) => ImageCard(
@@ -124,6 +150,8 @@ class _HomePageState extends State<HomePage> {
                 child: Hero(
                     tag: imageData.id,
                     child: CachedNetworkImage(
+                      height: 380.0,
+                      width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
                       imageUrl: imageData.urls.full,
                       placeholder: (context, url) =>Container(

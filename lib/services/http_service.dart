@@ -109,12 +109,12 @@ class Network{
 
 
   /* Http Params */
-  static Map<String, String> paramsSearch() {
+  static Map<String, String> paramsSearch(String search,int currentPage) {
     Map<String, String> params = Map();
     params.addAll({
       'client_id': HttpInterceptor.API_KEY,
-      'page':'8',
-      'query':'unsplash',
+      'page':currentPage.toString(),
+      'query':search,
     'per_page':'20'
 
     });
